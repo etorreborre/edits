@@ -64,17 +64,19 @@ splitOnDelimiters start end =
     )
     ([] :: [[Token]])
 
--- | Shorten some token on the left ...tokens
+-- | Shorten some token on the left: ...tokens
 shortenLeft :: ShortenOptions -> [Token] -> [Token]
 shortenLeft so ts = whenTooLong so ts $ Kept (_shortenText so) : drop (length ts - _shortenSize so) ts
 
--- | Shorten some token on the right tokens...
+-- | Shorten some token on the right: tokens...
 shortenRight :: ShortenOptions -> [Token] -> [Token]
 shortenRight so ts = whenTooLong so ts $ take (_shortenSize so) ts <> [Kept $ _shortenText so]
 
+-- | Shorten some token in the center: ...tokens...
 shortenCenter :: ShortenOptions -> [Token] -> [Token]
 shortenCenter so ts = whenTooLong so ts $ take (_shortenSize $ half so) ts <> [Kept $ _shortenText so] <> drop (length ts - _shortenSize so `div` 2) ts
 
+-- | Depending on the shorten option and the original list of tokens used a shorter version
 whenTooLong :: ShortenOptions -> [Token] -> [Token] -> [Token]
 whenTooLong so original shortened =
   if tokenSize original > _shortenSize so then shortened else original

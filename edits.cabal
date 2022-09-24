@@ -32,7 +32,6 @@ library
   hs-source-dirs:
       src
   default-extensions:
-      GHC2021
       LambdaCase
       MultiWayIf
       NoImplicitPrelude
@@ -49,7 +48,7 @@ library
     , protolude ==0.3.*
     , text ==1.*
     , vector >=0.10 && <2
-  default-language: Haskell2010
+  default-language: GHC2021
 
 test-suite spec
   type: exitcode-stdio-1.0
@@ -62,7 +61,6 @@ test-suite spec
   hs-source-dirs:
       test
   default-extensions:
-      GHC2021
       LambdaCase
       MultiWayIf
       NoImplicitPrelude
@@ -85,4 +83,4 @@ test-suite spec
     , tasty-hedgehog >=1.0 && <2.0
     , text ==1.*
     , vector >=0.10 && <2
-  default-language: Haskell2010
+  default-language: GHC2021

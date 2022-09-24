@@ -23,7 +23,6 @@ ghc-options:
   -optP-Wno-nonportable-include-path
 
 default-extensions:
- - GHC2021
  - LambdaCase
  - MultiWayIf
  - NoImplicitPrelude
@@ -32,7 +31,7 @@ default-extensions:
  - TypeFamilyDependencies
  - TypeOperators
 
-language: Haskell2010
+language: GHC2021
 
 dependencies:
   - base                 >= 4.14  && < 5

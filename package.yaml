@@ -1,0 +1,73 @@
+name: edits
+version: 0.1.0.0
+synopsis: compute the distance between 2 strings as a list of edit operations
+
+description: This library returns the minimum number of edit operations 'add', 'remove' necessary to transform a string
+             into another. It also provides ways to display the difference between the strings
+
+category: Control
+
+license: MIT
+license-file: LICENSE.txt
+
+maintainer: etorreborre@yahoo.com
+git: https://github.com/etorreborre/edits
+
+ghc-options:
+  -Wall
+  -Wcompat
+  -Wincomplete-record-updates
+  -fhide-source-paths
+  -fprint-potential-instances
+  -fno-warn-partial-type-signatures
+  -optP-Wno-nonportable-include-path
+
+default-extensions:
+ - GHC2021
+ - LambdaCase
+ - MultiWayIf
+ - NoImplicitPrelude
+ - OverloadedStrings
+ - TypeFamilies
+ - TypeFamilyDependencies
+ - TypeOperators
+
+language: Haskell2010
+
+dependencies:
+  - base                 >= 4.14  && < 5
+  - containers           >= 0.2   && < 1
+  - matrix               >= 0.3   && < 1
+  - primitive            >= 0.6   && < 1
+  - protolude            >= 0.3   && < 0.4
+  - text                 >= 1     && < 2
+  - vector               >= 0.10  && < 2
+
+library:
+  source-dirs: src
+
+  ghc-options:
+    -Wincomplete-uni-patterns
+
+tests:
+  spec:
+    main: test.hs
+    source-dirs:
+      - test
+    dependencies:
+      - edits
+      - hedgehog             >= 1.0   && < 2
+      - tasty                >= 1     && < 2
+      - registry-hedgehog    >= 0.7   && < 1
+      - tasty-discover       >= 2     && < 5
+      - tasty-hedgehog       >= 1.0   && < 2.0
+
+    ghc-options:
+      -threaded
+      -rtsopts
+      -with-rtsopts=-N
+      -fno-warn-orphans
+      -fno-warn-missing-signatures
+      -fno-warn-incomplete-uni-patterns
+      -fno-warn-type-defaults
+      -optP-Wno-nonportable-include-path

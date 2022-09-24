@@ -4,6 +4,7 @@
 module Data.Text.Difference where
 
 import Data.Text qualified as T
+import Data.Text.Color
 import Data.Text.EditOperation
 import Data.Text.Shorten
 import Data.Text.Token
@@ -53,6 +54,13 @@ taggedDisplayEditOperation (Insert c) = "+" <> T.singleton c
 taggedDisplayEditOperation (Delete c) = "-" <> T.singleton c
 taggedDisplayEditOperation (Substitute c1 c2) = "~" <> T.singleton c1 <> "/" <> T.singleton c2
 taggedDisplayEditOperation (Keep c) = T.singleton c
+
+-- | Display an edit operation using ascii colors: green = added, red = removed, blue = substituted
+coloredDisplayEditOperation :: EditOperation Char -> Text
+coloredDisplayEditOperation (Insert c) = colorAs Green (T.singleton c)
+coloredDisplayEditOperation (Delete c) = colorAs Red (T.singleton c)
+coloredDisplayEditOperation (Substitute c _) = colorAs Cyan (T.singleton c)
+coloredDisplayEditOperation (Keep c) = T.singleton c
 
 -- | Show the differences by enclosing them in separators
 --   Additionally shorten the text outside the separators if it is too long

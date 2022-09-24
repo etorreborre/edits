@@ -1,11 +1,11 @@
 name: edits
-version: 0.1.0.0
-synopsis: compute the distance between 2 strings as a list of edit operations
+version: 0.1.0.1
+synopsis: show the differences between 2 pieces of Text using the Levenshtein distance
 
-description: This library returns the minimum number of edit operations 'add', 'remove' necessary to transform a string
-             into another. It also provides ways to display the difference between the strings
+description: This library computes the minimum number of edit operations 'insert', 'delete', 'substitute' which are necessary
+             to transform a piece of text into another. It then displays the parts which are different in brackets.
 
-category: Control
+category: Data
 
 license: MIT
 license-file: LICENSE.txt

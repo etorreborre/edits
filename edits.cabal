@@ -5,7 +5,7 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           edits
-version:        0.1.0.2
+version:        0.1.1.0
 synopsis:       show the differences between 2 pieces of Text using the Levenshtein distance
 description:    This library computes the minimum number of edit operations 'insert', 'delete', 'substitute' which are necessary to transform a piece of text into another. It then displays the parts which are different in brackets.
 category:       Data

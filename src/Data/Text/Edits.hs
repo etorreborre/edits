@@ -25,13 +25,13 @@
 -- import Data.Text.Edits
 --
 -- -- "between the e and the n the letter i was added"
--- showDistance "kitten" "kittein" === ("kitte[]n", "kitte[i]n")
+-- showDistance "kitten" "kittein" === "kitte[+i]n"
 --
 -- -- "at the end of the text 3 letters have been deleted"
--- showDistance "kitten" "kit" === ("kit[ten]", "kit[]")
+-- showDistance "kitten" "kit" === "kit[-t-e-n]"
 --
 -- -- "between the t and the n 2 letters have been modified"
--- showDistance "kitten" "kitsin" === ("kit[te]n", "kit[si]n" )
+-- showDistance "kitten" "kitsin" === "kit[~t/s~e/i]"
 -- @
 module Data.Text.Edits
   ( SplitSize (..),
@@ -42,10 +42,11 @@ module Data.Text.Edits
     Color (..),
     colorAs,
     showDistance,
+    showDistanceColored,
     showDistanceWith,
+    levenshteinOperations,
     defaultDisplayOptions,
     defaultDisplayEditOperations,
-    taggedDisplayEditOperation,
     coloredDisplayEditOperation,
     defaultSplitSize,
     parensSeparators,
@@ -72,16 +73,26 @@ defaultSplitSize :: SplitSize
 defaultSplitSize = SplitSize 200
 
 -- | Show the distance between 2 pieces of text
-showDistance :: Text -> Text -> (Text, Text)
+showDistance :: Text -> Text -> Text
 showDistance = showDistanceWith defaultSplitSize defaultDisplayOptions
 
+-- | Show the distance between 2 pieces of text with colors instead of symbols
+showDistanceColored :: Text -> Text -> Text
+showDistanceColored = showDistanceWith defaultSplitSize defaultDisplayOptions {_displayEditOperation = coloredDisplayEditOperation}
+
 -- | Show the distance between 2 pieces of text and specify splitting / display options
-showDistanceWith :: SplitSize -> DisplayOptions -> Text -> Text -> (Text, Text)
+showDistanceWith :: SplitSize -> DisplayOptions -> Text -> Text -> Text
 showDistanceWith splitSize displayOptions ts1 ts2 =
-  foldSplitTexts splitSize ts1 ts2 ([], []) $ \ts (line1, line2) -> do
-    let matrix = createEditMatrix textLevenshteinCosts (toS line1) (toS line2)
-    let operations = toList $ makeEditOperations (V.fromList . toS $ line1) (V.fromList . toS $ line2) matrix
-    ts <> (displayDiffs displayOptions operations, displayDiffs displayOptions $ inverse <$> operations)
+  foldSplitTexts splitSize ts1 ts2 [] $ \ts (line1, line2) -> do
+    let operations = levenshteinOperations (toS line1) (toS line2)
+    ts <> displayDiffs displayOptions operations
+
+-- | Return the list of operations necessary to go from one piece of text to another
+--   using the Levenshtein distance
+levenshteinOperations :: Text -> Text -> [EditOperation Char]
+levenshteinOperations t1 t2 = do
+  let matrix = createEditMatrix textLevenshteinCosts (toS t1) (toS t2)
+  toList $ makeEditOperations (V.fromList . toS $ t1) (V.fromList . toS $ t2) matrix
 
 -- | Split texts and apply the difference on each part
 foldSplitTexts :: SplitSize -> Text -> Text -> a -> (a -> (Text, Text) -> a) -> a

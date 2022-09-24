@@ -41,19 +41,12 @@ data DisplayOptions = DisplayOptions
 defaultDisplayOptions :: DisplayOptions
 defaultDisplayOptions = DisplayOptions bracketsSeparators (ShortenOptions 20 "...") defaultDisplayEditOperations
 
--- | Default display for edit operations
-defaultDisplayEditOperations :: EditOperation Char -> Text
-defaultDisplayEditOperations (Insert c) = T.singleton c
-defaultDisplayEditOperations (Delete c) = T.singleton c
-defaultDisplayEditOperations (Substitute c _) = T.singleton c
-defaultDisplayEditOperations (Keep c) = T.singleton c
-
 -- | Display an edit operation by prepending a symbol showing which operation is used
-taggedDisplayEditOperation :: EditOperation Char -> Text
-taggedDisplayEditOperation (Insert c) = "+" <> T.singleton c
-taggedDisplayEditOperation (Delete c) = "-" <> T.singleton c
-taggedDisplayEditOperation (Substitute c1 c2) = "~" <> T.singleton c1 <> "/" <> T.singleton c2
-taggedDisplayEditOperation (Keep c) = T.singleton c
+defaultDisplayEditOperations :: EditOperation Char -> Text
+defaultDisplayEditOperations (Insert c) = "+" <> T.singleton c
+defaultDisplayEditOperations (Delete c) = "-" <> T.singleton c
+defaultDisplayEditOperations (Substitute c1 c2) = "~" <> T.singleton c1 <> "/" <> T.singleton c2
+defaultDisplayEditOperations (Keep c) = T.singleton c
 
 -- | Display an edit operation using ascii colors: green = added, red = removed, blue = substituted
 coloredDisplayEditOperation :: EditOperation Char -> Text
@@ -73,7 +66,7 @@ displayDiffs (DisplayOptions (Separators start end) shortenOptions displayEditOp
               --  this allows us to open a 'start' delimiter
               --  then when we go back to keeping the same character, we can close with an 'end' delimiter
               case operation of
-                Insert {} -> (True, res <> [Delimiter start | not different])
+                Insert {} -> (True, res <> [Delimiter start | not different] <> [Kept $ displayEditOperation operation])
                 Delete {} -> (True, res <> [Delimiter start | not different] <> [Kept $ displayEditOperation operation])
                 Substitute {} -> (True, res <> [Delimiter start | not different] <> [Kept $ displayEditOperation operation])
                 Keep {} -> (False, res <> [Delimiter end | different] <> [Kept $ displayEditOperation operation])

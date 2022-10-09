@@ -17,6 +17,21 @@ test_shorten = test "shorten difference" $ do
   shorten "abcdef[]ghijkl" === "...bcdef[]ghijk..."
   shorten "abcdefg[zz]abcdefghijklmno[xx]abcdefg" === "...cdefg[zz]ab...no[xx]abcde..."
 
+test_split_on_delimiters = test "split on delimiters" $ do
+  let start = Delimiter "("
+  let end = Delimiter ")"
+  -- ab[cd]ef[g]h
+  let delimited = [Kept "a", Kept "b", start, Kept "c", Kept "d", end, Kept "e", Kept "f", start, Kept "g", end, Kept "h"]
+  -- [[ab],[(cd)], [ef], [(g)], [h]]
+  let expected =
+        [ [Kept "a", Kept "b"],
+          [start, Kept "c", Kept "d", end],
+          [Kept "e", Kept "f"],
+          [start, Kept "g", end],
+          [Kept "h"]
+        ]
+  splitOnDelimiters start end delimited === expected
+
 -- * Helpers
 
 shorten :: Text -> Text

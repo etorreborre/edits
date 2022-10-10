@@ -21,27 +21,20 @@ half (ShortenOptions ss t) = ShortenOptions (coerce ss `div` 2) t
 
 -- | Shorten a piece of text that has already been tokenized
 shortenTokens :: ShortenOptions -> Token -> Token -> [Token] -> [Token]
-shortenTokens shortenOptions startDelimiter endDelimiter tokens = do
-  foldl'
-    ( \res cur ->
-        -- [abcdefgh] -> [abcdefgh]
-        if head cur == Just startDelimiter && lastMay cur == Just endDelimiter
-          then res <> cur
-          else -- <start>abcdefgh -> ...defgh
-
-            if head cur == Just Start
-              then res <> shortenLeft shortenOptions cur
-              else -- abcdefgh<end> -> abcd...
-
-                if lastMay cur == Just End
-                  then res ++ shortenRight shortenOptions cur
-                  else -- abcdefgh -> abc...fgh
-                    res <> shortenCenter shortenOptions cur
+shortenTokens shortenOptions startDelimiter endDelimiter tokens =
+  foldMap
+    ( \ts ->
+        case (head ts, lastMay ts) of
+          -- <start>abcdefgh -> ...defgh
+          (Just Start, _) -> shortenLeft shortenOptions ts
+          -- abcdefgh<end> -> abcd...
+          (_, Just End) -> shortenRight shortenOptions ts
+          -- [abcdefgh] -> [abcdefgh]
+          (Just s, Just e) | s == startDelimiter && e == endDelimiter -> ts
+          -- abcdefgh -> abc...fgh
+          _ -> shortenCenter shortenOptions ts
     )
-    []
-    delimitedTokens
-  where
-    delimitedTokens = splitOnDelimiters startDelimiter endDelimiter (Start : (tokens <> [End]))
+    $ splitOnDelimiters startDelimiter endDelimiter (Start : (tokens <> [End]))
 
 -- | Split a list of tokens into several lists when a delimiter is found
 --   abcd[efgh]ijkl[mnop]qrst -> [abcd, [efgh], ijkl, [mnop], qrst]
